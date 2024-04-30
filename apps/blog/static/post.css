@@ -7,15 +7,25 @@
 .post {
     background-color: rgb(255, 255, 255); opacity: 0.8;
     margin-bottom: 20px;
-    padding: 20px;
+    /* padding: 20px; */
     border: 1px solid #ccc;
     border-radius: 5px;
     margin-left: 30px;
     margin-right: 30px;
     padding-bottom: 0px;
-
 }
-
+#main_post {
+    width: 50%;
+    text-align: center;
+    margin: 0 auto; /* This will center the div horizontally */
+    margin-bottom: 10px;
+}
+.main_title{
+    margin: 0;
+    white-space: nowrap; /* 텍스트가 줄 바꿈되지 않도록 설정합니다. */
+    overflow: hidden; /* 넘치는 텍스트를 숨깁니다. */
+    text-overflow: ellipsis; /* 넘치는 부분에 (...)를 추가합니다. */
+}
 .post-title {
     margin-left: 20px;
     margin-right: 20px;
@@ -23,6 +33,7 @@
 }
 
 .post-title h1 {
+    padding-top: 6px;
     margin: 0;
     font-size: 28px;
     font-family: 'Orbit-Regular', sans-serif;

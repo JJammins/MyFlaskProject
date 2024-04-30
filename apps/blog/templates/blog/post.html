@@ -1,29 +1,56 @@
 {% extends 'blog/layout.html' %}
 {% block content %}
 <link rel="stylesheet" href="{{ url_for('blog.static', filename='post.css') }}">
-{% for post in posts %}
-<div class="post">
+<link rel="stylesheet" href="{{ url_for('blog.static', filename='page.css') }}">
+{% for post in posts.items %}
+<div class="post" id="main_post">
     <div class="post-title">
-        <h1>{{ post.title }}</a></h1>
-        <hr>
-    </div>
-    <div class="post-content">
-        <p id="post-content">
-            {% autoescape false %}
-            {{ post.content }}
-            {% endautoescape %}
-        </p>
-        {% if post.updated_at == post.created_at %}
-            <p class="post-date">{{ post.created_at.strftime("%Y-%m-%d %I:%M %p") }}</p>
-        {% else %}
-            <p class="post-date">{{ post.updated_at.strftime("%Y-%m-%d %I:%M %p") }}</p>
-        {% endif %}
-        <div class="post-buttons">
-            <a href="{{ url_for('blog.edit_post', post_id=post.id) }}" class="edit-button">수정</a>
-            <a href="{{ url_for('blog.delete_post', post_id=post.id) }}" class="delete-button"
-            onclick="return confirm('게시물을 삭제하시겠습니까?')">삭제</a>
-        </div>
+        <h1><a class="main_title" href="{{ url_for('blog.detail', post_id=post.id) }}">{{ post.title | truncate(30)}}</a></h1>
     </div>
 </div>
 {% endfor %}
+<div class="pagination">
+    <ul>
+        <!-- 이전 페이지 -->
+        {% if posts.has_prev %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ posts.prev_num }}">이전</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <span class="page-link">이전</span>
+        </li>
+        {% endif %}
+        
+        <!-- 페이지 번호 -->
+        {% for page_num in posts.iter_pages() %}
+        {% if page_num %}
+        {% if page_num == posts.page %}
+        <li class="page-item active">
+            <span class="page-link">{{ page_num }}</span>
+        </li>
+        {% else %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a>
+        </li>
+        {% endif %}
+        {% else %}
+        <li class="page-item disabled">
+            <span class="page-link">...</span>
+        </li>
+        {% endif %}
+        {% endfor %}
+        
+        <!-- 다음 페이지 -->
+        {% if posts.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ posts.next_num }}">다음</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <span class="page-link">다음</span>
+        </li>
+        {% endif %}
+    </ul>
+</div>
 {% endblock %}

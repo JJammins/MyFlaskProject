@@ -1,0 +1,26 @@
+{% extends 'blog/layout.html' %}
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('blog.static', filename='post.css') }}">
+<div class="post">
+    <div class="post-title">
+        <h1>{{ post.title }}</h1>
+        <hr>
+    </div>
+    <div class="post-content">
+        <p id="post-content">
+            {% autoescape false %}
+            {{ post.content }}
+            {% endautoescape %}
+        </p>
+        {% if post.updated_at == post.created_at %}
+            <p class="post-date">{{ post.created_at.strftime("%Y-%m-%d %I:%M %p") }}</p>
+        {% else %}
+            <p class="post-date">{{ post.updated_at.strftime("%Y-%m-%d %I:%M %p") }}</p>
+        {% endif %}
+        <div class="post-buttons">
+            <a href="{{ url_for('blog.edit_post', post_id=post.id) }}" class="edit-button">수정</a>
+            <a href="{{ url_for('blog.delete_post', post_id=post.id) }}" class="delete-button"
+            onclick="return confirm('게시물을 삭제하시겠습니까?')">삭제</a>
+        </div>
+</div>
+{% endblock %}

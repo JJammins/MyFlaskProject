@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, request
+from flask import Blueprint, render_template, redirect, url_for, request
 from apps.blog.forms import PostForm, UserForm
 from apps.app import db
 from apps.blog.models import Post, User
@@ -12,13 +12,37 @@ blog = Blueprint(
     static_folder="static"
 )
 
+# 페이징 기능 넣기 전
+# @blog.route("/post")
+# def post():
+#     posts = Post.query.all()
+#     page = request.args.get('page', type=int, default=1)
+#     posts = posts.paginate(page=page, per_page=2)
+#     for post in posts :
+#         post.content = post.content.replace('\n', '<br>')
+
 @blog.route("/post")
 def post():
-    posts = Post.query.all()
-    for post in posts :
+    page = request.args.get('page', type=int, default=1)
+
+    # 게시물을 가져오는 쿼리 
+    posts_query = Post.query.order_by(Post.created_at.desc())
+
+    # 게시물을 페이징하여 가져오기
+    posts_paginated = posts_query.paginate(page=page, per_page=9)
+
+    # 게시물 내용의 줄바꿈 처리
+    for post in posts_paginated.items:
         post.content = post.content.replace('\n', '<br>')
 
-    return render_template("blog/post.html", posts=posts)
+    return render_template("blog/post.html", posts=posts_paginated)
+
+@blog.route('/post/detail/<post_id>')
+@login_required
+def detail(post_id):
+    post = Post.query.get(post_id)
+    post.content = post.content.replace('\n', '<br>')
+    return render_template('blog/detail_post.html', post=post)
 
 @blog.route("/post/new", methods=["GET", "POST"])
 @login_required
@@ -36,7 +60,7 @@ def create_post():
         return redirect(url_for("blog.post"))
     return render_template("blog/create_post.html", form=form, title="게시물 작성")
 
-@blog.route("/post/<post_id>", methods=["GET", "POST"])
+@blog.route("/post/edit/<post_id>", methods=["GET", "POST"])
 @login_required
 def edit_post(post_id):
     form = PostForm()
