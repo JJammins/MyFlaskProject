@@ -1,0 +1,19 @@
+{% extends 'blog/layout.html' %}
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('blog.static', filename='create-post.css') }}">
+<div class="write-post">
+    <form
+        action="{{ url_for('blog.edit_post', post_id=post.id) }}"
+        method="post"
+        novalidate="novalidate">
+        {{ form.csrf_token }}
+        <div class="form-group">
+            {{ form.title(class="form-control", id="title", placeholder="제목", value=post.title) }}
+        </div>
+        <div class="form-group">
+            {{ form.content(class="form-control", id="content", value=post.content) }}
+        </div>
+        <button type="submit" class="btn">수정</button>
+    </form>
+</div>
+{% endblock %}

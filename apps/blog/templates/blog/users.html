@@ -1,0 +1,28 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="{{ url_for('blog.static', filename='users.css')}}">
+</head>
+<body>
+    <table>
+        <tr>
+            <th>사용자 NUM</th>
+            <th>닉네임</th>
+            <th>이메일</th>
+        </tr>
+        {% for user in users %}
+        <tr>
+            <td>
+                <a href="{{ url_for('blog.edit_user', user_id=user.id)}}">
+                    {{ user.id }}
+                </a></td>
+            <td>{{ user.nickname }}</td>
+            <td>{{ user.email }}</td> 
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html> -->

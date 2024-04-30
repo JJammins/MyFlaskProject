@@ -1,0 +1,45 @@
+{% extends 'blog/layout.html' %}
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('blog.static', filename='edit_user.css') }}">
+<div class="table" style="margin-top: 50px;">
+    <form action="{{ url_for('blog.edit_user', user_id=user.id) }}"
+        method="post"
+        novalidate="novalidate"
+        id="editForm"
+        autocomplete="off">
+        {{ form.csrf_token }}
+        <h2>회원정보 수정</h2>
+        <p>
+            {{ form.nickname(value=user.nickname) }}
+        </p>
+        <p>
+            {{ form.email(value=user.email)}}
+        </p>
+        <p>
+            {{ form.password(placeholder="비밀번호") }}
+        </p>
+        <input type="submit" value="수정">
+        <button type="button" id="deleteButton">회원탈퇴</button>
+    </form>
+</div>
+
+<script>
+    document.getElementById('deleteButton').addEventListener('click', function(event) {
+        let confirmation = confirm('정말로 회원을 탈퇴하시겠습니까?');
+        if (confirmation) {
+            let deleteForm = document.createElement('form');
+            deleteForm.action = "{{ url_for('blog.delete_user', user_id=user.id) }}";
+            deleteForm.method = 'post';
+
+            let csrfTokenInput = document.createElement('input');
+            csrfTokenInput.type = 'hidden';
+            csrfTokenInput.name = 'csrf_token';
+            csrfTokenInput.value = "{{ form.csrf_token._value() }}";
+            deleteForm.appendChild(csrfTokenInput);
+
+            document.body.appendChild(deleteForm);
+            deleteForm.submit();
+        }
+    });
+</script>
+{% endblock %}

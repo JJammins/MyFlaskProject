@@ -1,0 +1,40 @@
+{% extends "blog/layout.html" %}
+{% block title %}회원가입{% endblock %}
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('auth.static', filename='login.css')}}">
+<div class="table">
+    <h2>회원가입</h2>
+    <form
+        action="{{ url_for('auth.signup', next=request.args.get('next')) }}"
+        method="post"
+        novalidate="novalidate"
+        autocomplete="off">
+        {% for message in get_flashed_messages() %}
+        <p style="color: red">{{ message }}</p>
+        {% endfor %}
+        {{ form.csrf_token }}
+        <p>
+            {{ form.nickname(size=10, placeholder="닉네임") }}
+        </p>
+        {% for error in form.nickname.errors %}
+        <span style="color: red">{{ error }}</span>
+        {% endfor %}
+        <p>
+            {{ form.email(placeholder="이메일") }}
+        </p>
+        {% for error in form.email.errors %}
+        <span style="color: red">{{ error }}</span>
+        {% endfor %}
+        <p>
+            {{ form.password(placeholder="비밀번호") }}
+        </p>
+        {% for error in form.password.errors %}
+        <span style="color: red">{{ error }}</span>
+        <br>
+        <br>
+        {% endfor %}
+        <input type="submit" value="회원가입">
+        
+    </form>
+</div>
+{% endblock %}
