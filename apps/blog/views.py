@@ -39,12 +39,12 @@ def create_post():
 @blog.route("/post/<post_id>", methods=["GET", "POST"])
 @login_required
 def edit_post(post_id):
-    post = Post.query.get_or_404(post_id)
-    form = PostForm(obj=post)
-
+    form = PostForm()
+    post = Post.query.filter_by(id=post_id).first()
     if form.validate_on_submit():
-        form.populate_obj(post)
-        post.updated_at = datetime.now() 
+        post.title = form.title.data
+        post.content = form.content.data
+        post.updated_at = form.updated_at.data
         db.session.add(post)
         db.session.commit()
         return redirect(url_for("blog.post"))
@@ -67,7 +67,6 @@ def delete_post(post_id):
 @blog.route("/users/<user_id>", methods=["GET", "POST"])
 def edit_user(user_id):
     form = UserForm()
-
     user = User.query.filter_by(id=user_id).first()
     if form.validate_on_submit():
         user.nickname = form.nickname.data
