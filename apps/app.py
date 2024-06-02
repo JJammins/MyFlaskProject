@@ -8,9 +8,12 @@ from flask_login import LoginManager
 
 db = SQLAlchemy()
 csrf = CSRFProtect()
+
+# LoginManager 설정
 login_manager = LoginManager()
 login_manager.login_view = "auth.login"
 login_manager.login_message = ""
+
 def create_app(config_key) :
     app = Flask(__name__)
     # config_key에 매치하는 환경의 config 클래스를 읽어들인다
@@ -29,8 +32,11 @@ def create_app(config_key) :
     db.init_app(app)
     Migrate(app, db)
     csrf.init_app(app)
+
+    # 로그인 매니저 초기화
     login_manager.init_app(app)
     
+    # 인증 블루프린트 등록
     from apps.auth import views as auth_views
     app.register_blueprint(auth_views.auth, url_prefix="/auth")
 

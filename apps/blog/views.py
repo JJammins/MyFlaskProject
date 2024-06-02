@@ -1,9 +1,8 @@
 from flask import Blueprint, render_template, redirect, url_for, request
-from apps.blog.forms import PostForm, UserForm
+from apps.blog.forms import PostForm
 from apps.app import db
-from apps.blog.models import Post, User
+from apps.blog.models import Post
 from flask_login import login_required
-from datetime import datetime
 
 blog = Blueprint(
     "blog",
@@ -31,14 +30,9 @@ def post():
     # 게시물을 페이징하여 가져오기
     posts_paginated = posts_query.paginate(page=page, per_page=9)
 
-    # 게시물 내용의 줄바꿈 처리
-    for post in posts_paginated.items:
-        post.content = post.content.replace('\n', '<br>')
-
     return render_template("blog/post.html", posts=posts_paginated)
 
 @blog.route('/post/detail/<post_id>')
-@login_required
 def detail(post_id):
     post = Post.query.get(post_id)
     post.content = post.content.replace('\n', '<br>')
@@ -48,6 +42,8 @@ def detail(post_id):
 @login_required
 def create_post():
     form = PostForm()
+
+    # 폼 유효성 검사 및 데이터 처리
     if form.validate_on_submit():
         post = Post(
             title = form.title.data,
@@ -64,7 +60,11 @@ def create_post():
 @login_required
 def edit_post(post_id):
     form = PostForm()
+
+    # 기존 게시물 조회
     post = Post.query.filter_by(id=post_id).first()
+
+    # 폼 유효성 검사 및 데이터 처리
     if form.validate_on_submit():
         post.title = form.title.data
         post.content = form.content.data
@@ -88,22 +88,22 @@ def delete_post(post_id):
 #     users = User.query.all()
 #     return render_template("blog/users.html", users=users)
 
-@blog.route("/users/<user_id>", methods=["GET", "POST"])
-def edit_user(user_id):
-    form = UserForm()
-    user = User.query.filter_by(id=user_id).first()
-    if form.validate_on_submit():
-        user.nickname = form.nickname.data
-        user.email = form.email.data
-        user.password = form.password.data
-        db.session.add(user)
-        db.session.commit()
-        return redirect(url_for("blog.post"))
-    return render_template("blog/edit_user.html", user=user, form=form, title="회원정보 수정")
+# @blog.route("/users/<user_id>", methods=["GET", "POST"])
+# def edit_user(user_id):
+#     form = UserForm()
+#     user = User.query.filter_by(id=user_id).first()
+#     if form.validate_on_submit():
+#         user.nickname = form.nickname.data
+#         user.email = form.email.data
+#         user.password = form.password.data
+#         db.session.add(user)
+#         db.session.commit()
+#         return redirect(url_for("blog.post"))
+#     return render_template("blog/edit_user.html", user=user, form=form, title="회원정보 수정")
 
-@blog.route("/users/<user_id>/delete", methods=["POST"])
-def delete_user(user_id):
-    user=User.query.filter_by(id=user_id).first()
-    db.session.delete(user)
-    db.session.commit()
-    return redirect(url_for("blog.post"))
+# @blog.route("/users/<user_id>/delete", methods=["POST"])
+# def delete_user(user_id):
+#     user=User.query.filter_by(id=user_id).first()
+#     db.session.delete(user)
+#     db.session.commit()
+#     return redirect(url_for("blog.post"))

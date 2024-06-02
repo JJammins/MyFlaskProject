@@ -13,6 +13,7 @@ class User(db.Model, UserMixin):
     password_hash = db.Column(db.String)
     created_at = db.Column(db.DateTime, default=datetime.now)
 
+    # 비밀번호 프로퍼티와 관련 메서드
     @property
     def password(self):
         raise AttributeError("읽어들일 수 없음")
@@ -21,13 +22,15 @@ class User(db.Model, UserMixin):
     def password(self, password):
         self.password_hash = generate_password_hash(password)
 
+    # 비밀번호 검증 메서드
     def verify_password(self, password):
         return check_password_hash(self.password_hash, password)
     
+    # 중복 검사 메서드
     def is_duplicate_email(self):
         return User.query.filter_by(email=self.email).first() is not None
     
-    def is_duplicat_nickname(self):
+    def is_duplicate_nickname(self):
         return User.query.filter_by(nickname=self.nickname).first() is not None
 
 @login_manager.user_loader
